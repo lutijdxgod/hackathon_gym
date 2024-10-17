@@ -8,6 +8,8 @@ from .models.database import db_helper
 from .config import settings
 from fastapi_limiter import FastAPILimiter
 
+from .api.muscle_groups.router import router as muscle_groups_router
+
 
 async def custom_callback(request: Request, response: Response, pexpire: int):
     """
@@ -48,6 +50,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(muscle_groups_router)
 
 
 @app.get("/ping")
