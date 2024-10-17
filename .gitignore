@@ -1,0 +1,6 @@
+__pycache__
+.env
+venv/
+alembic.ini
+firebase_credentials.json
+.VSCodeCounter/

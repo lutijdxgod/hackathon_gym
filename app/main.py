@@ -1,0 +1,56 @@
+from math import ceil
+import redis.asyncio as redis
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, HTTPException, Request, Response, status
+from fastapi.middleware.cors import CORSMiddleware
+
+from .models.database import db_helper
+from .config import settings
+from fastapi_limiter import FastAPILimiter
+
+
+async def custom_callback(request: Request, response: Response, pexpire: int):
+    """
+    default callback when too many requests
+    :param request:
+    :param pexpire: The remaining milliseconds
+    :param response:
+    :return:
+    """
+    expire = ceil(pexpire / 1000)
+
+    raise HTTPException(
+        status.HTTP_429_TOO_MANY_REQUESTS,
+        f"Слишком много запросов. Попробуйте снова через {expire} секунд.",
+        headers={"Retry-After": str(expire)},
+    )
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    redis_connection = redis.from_url("redis://localhost", encoding="utf8", decode_responses=True)
+    await FastAPILimiter.init(
+        redis=redis_connection,
+        http_callback=custom_callback,
+    )
+    yield
+    await FastAPILimiter.close()
+    await db_helper.dispose()
+
+
+app = FastAPI(lifespan=lifespan)
+
+origins = ["*"]  # ["*"] for public api
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/ping")
+async def root():
+    print(settings.auth.access_token_expire_minutes)
+    return {"success": True, "message": " pong"}
