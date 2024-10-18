@@ -70,6 +70,7 @@ class Subscription(Base):
     __tablename__ = "subscriptions"
 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    gym_id = Column(Integer, ForeignKey("gyms.id"), nullable=False)
     end_time = Column(TIMESTAMP, nullable=False)
     price = Column(Integer)
 
@@ -106,3 +107,10 @@ class ExerciseMedia(Base):
     exercise_id = Column(Integer, ForeignKey("exercises.id"))
     type = Column(Enum(MediaType), nullable=False)
     url = Column(String, nullable=False)
+
+
+class Gym(Base):
+    __tablename__ = "gyms"
+
+    name = Column(String, nullable=False)
+    image_url = Column(String, nullable=False)
