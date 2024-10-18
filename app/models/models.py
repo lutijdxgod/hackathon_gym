@@ -50,6 +50,7 @@ class UserInfo(Base):
 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     sex = Column(Enum(Sex), nullable=False)
+    image_url = Column(String, nullable=True)
     date_of_birthday = Column(TIMESTAMP, nullable=False)
     weight = Column(Float, nullable=False)
     height = Column(Integer, nullable=False)
@@ -93,7 +94,9 @@ class Exercise(Base):
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
     equipment_id = Column(Integer, ForeignKey("equipment.id"), nullable=False)
-    muscle_group_id = Column(Integer, ForeignKey("muscle_groups.id"), nullable=False)
+    muscle_group_id = Column(
+        Integer, ForeignKey("muscle_groups.id"), nullable=False
+    )
     image_url = Column(String, nullable=False)
 
 
