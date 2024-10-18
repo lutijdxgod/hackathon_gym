@@ -8,6 +8,7 @@ async def get_muscle_groups(session: AsyncSession):
     query = select(MuscleGroup)
     query_result = await session.execute(query)
     result = query_result.all()
+
     if not result:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
