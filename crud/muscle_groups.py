@@ -6,7 +6,7 @@ from app.models.models import MuscleGroup
 
 async def get_muscle_groups(session: AsyncSession):
     query = select(MuscleGroup)
-    query_result = await session.execute(query)
+    query_result = await session.scalars(query)
     result = query_result.all()
 
     if not result:
