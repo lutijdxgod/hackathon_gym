@@ -43,7 +43,7 @@ async def lifespan(app: FastAPI):
     await db_helper.dispose()
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 origins = ["*"]  # ["*"] for public api
 app.add_middleware(
