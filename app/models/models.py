@@ -9,7 +9,7 @@ from sqlalchemy import (
     ForeignKey,
 )
 from enum import Enum as ENUM
-from sqlalchemy.sql.expression import func
+from sqlalchemy.sql import func
 from .base import Base
 
 
@@ -40,9 +40,9 @@ class User(Base):
 
     name = Column(String, nullable=False)
     surname = Column(String, nullable=False)
-    mobile_phone = Column(String(length=10), nullable=False)
+    phone_number = Column(String(length=10), nullable=False, unique=True)
     password = Column(String, nullable=False)
-    created_at = Column(TIMESTAMP, nullable=False, default=func.now())
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
 
 
 class UserInfo(Base):
@@ -95,9 +95,7 @@ class Exercise(Base):
     name = Column(String, nullable=False)
     description = Column(String, nullable=False)
     equipment_id = Column(Integer, ForeignKey("equipment.id"), nullable=False)
-    muscle_group_id = Column(
-        Integer, ForeignKey("muscle_groups.id"), nullable=False
-    )
+    muscle_group_id = Column(Integer, ForeignKey("muscle_groups.id"), nullable=False)
     image_url = Column(String, nullable=False)
 
 

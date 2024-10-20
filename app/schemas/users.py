@@ -1,6 +1,10 @@
 from pydantic import BaseModel, Field
 
 
+class UserCreate(BaseModel):
+    phone_number: str
+
+
 class Token(BaseModel):
     access_token: str = Field(
         name="Access Token",
@@ -15,3 +19,15 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: str | None
+
+
+class UserRegisterCheckCode(BaseModel):
+    phone_number: str
+    verification_code: str
+    password: str
+    name: str = Field(name="Name", description="String that represents User's name", examples=["Тоха"])
+    surname: str = Field(
+        name="Surname",
+        description="String that represents User's surname",
+        examples=["Мыськин"],
+    )

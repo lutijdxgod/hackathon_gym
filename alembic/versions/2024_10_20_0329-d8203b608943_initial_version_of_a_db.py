@@ -1,8 +1,8 @@
 """initial version of a db
 
-Revision ID: 7172fe03a656
+Revision ID: d8203b608943
 Revises: 
-Create Date: 2024-10-19 01:04:34.319305
+Create Date: 2024-10-20 03:29:50.004905
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '7172fe03a656'
+revision = 'd8203b608943'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,6 +23,12 @@ def upgrade() -> None:
     sa.Column('image_url', sa.String(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_equipment'))
+    )
+    op.create_table('gyms',
+    sa.Column('name', sa.String(), nullable=False),
+    sa.Column('image_url', sa.String(), nullable=False),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_gyms'))
     )
     op.create_table('muscle_groups',
     sa.Column('name', sa.String(), nullable=False),
@@ -42,11 +48,12 @@ def upgrade() -> None:
     op.create_table('users',
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('surname', sa.String(), nullable=False),
-    sa.Column('mobile_phone', sa.String(length=10), nullable=False),
+    sa.Column('phone_number', sa.String(length=10), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
-    sa.Column('created_at', sa.TIMESTAMP(), nullable=False),
+    sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_users'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_users')),
+    sa.UniqueConstraint('phone_number', name=op.f('uq_users_phone_number'))
     )
     op.create_table('exercises',
     sa.Column('name', sa.String(), nullable=False),
@@ -61,9 +68,11 @@ def upgrade() -> None:
     )
     op.create_table('subscriptions',
     sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('gym_id', sa.Integer(), nullable=False),
     sa.Column('end_time', sa.TIMESTAMP(), nullable=False),
     sa.Column('price', sa.Integer(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['gym_id'], ['gyms.id'], name=op.f('fk_subscriptions_gym_id_gyms')),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_subscriptions_user_id_users')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_subscriptions'))
     )
@@ -100,5 +109,6 @@ def downgrade() -> None:
     op.drop_table('users')
     op.drop_table('user_verification')
     op.drop_table('muscle_groups')
+    op.drop_table('gyms')
     op.drop_table('equipment')
     # ### end Alembic commands ###

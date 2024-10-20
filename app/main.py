@@ -10,6 +10,7 @@ from fastapi_limiter import FastAPILimiter
 
 from .api.muscle_groups.router import router as muscle_groups_router
 from .api.exercises.router import router as exercises_router
+from .api.auth.router import router as auth_router
 
 
 async def custom_callback(request: Request, response: Response, pexpire: int):
@@ -31,9 +32,7 @@ async def custom_callback(request: Request, response: Response, pexpire: int):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    redis_connection = redis.from_url(
-        "redis://localhost", encoding="utf8", decode_responses=True
-    )
+    redis_connection = redis.from_url("redis://localhost", encoding="utf8", decode_responses=True)
     await FastAPILimiter.init(
         redis=redis_connection,
         http_callback=custom_callback,
@@ -56,6 +55,7 @@ app.add_middleware(
 
 app.include_router(muscle_groups_router)
 app.include_router(exercises_router)
+app.include_router(auth_router)
 
 
 @app.get("/ping")

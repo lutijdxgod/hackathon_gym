@@ -4,16 +4,16 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta, timezone
 
-from .models.models import database
+from app.models.database import db_helper as db
 from .models import models
-from .auth.schemas import TokenData
+from app.schemas.users import TokenData
 from .config import settings
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login_st2")
 
-SECRET_KEY = settings.secret_key
-ALGORITHM = settings.algorithm
-ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
+SECRET_KEY = settings.auth.secret_key
+ALGORITHM = settings.auth.algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES = settings.auth.access_token_expire_minutes
 
 
 def create_access_token(data: dict):
@@ -42,7 +42,7 @@ def verify_access_token(token: str, credentials_exception):
     return token_data
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(database.get_db)):
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(db.session_getter)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="could not validate credentials",
