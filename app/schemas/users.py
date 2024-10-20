@@ -18,7 +18,7 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    id: str | None
+    user_id: str | None
 
 
 class UserRegisterCheckCode(BaseModel):
@@ -31,3 +31,19 @@ class UserRegisterCheckCode(BaseModel):
         description="String that represents User's surname",
         examples=["Мыськин"],
     )
+
+
+class UserLogin(BaseModel):
+    phone_number: str
+    password: str
+
+
+class UserOut(BaseModel):
+    id: str
+    name: str
+    surname: str
+
+
+class SubscriptionOut(BaseModel):
+    id: str
+    price: int

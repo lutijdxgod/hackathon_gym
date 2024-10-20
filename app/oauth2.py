@@ -1,15 +1,15 @@
 from jose import JWTError, jwt
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
 from datetime import datetime, timedelta, timezone
-
+from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.database import db_helper as db
 from .models import models
-from app.schemas.users import TokenData
+from app.schemas.users import Token, TokenData
 from .config import settings
+from sqlalchemy import select
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login_st2")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 SECRET_KEY = settings.auth.secret_key
 ALGORITHM = settings.auth.algorithm
@@ -34,7 +34,7 @@ def verify_access_token(token: str, credentials_exception):
 
         if id is None:
             raise credentials_exception
-        token_data = TokenData(id=str(id))
+        token_data = TokenData(user_id=str(id))
 
     except JWTError:
         raise credentials_exception
@@ -42,7 +42,7 @@ def verify_access_token(token: str, credentials_exception):
     return token_data
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(db.session_getter)):
+async def get_current_user(token: Token = Depends(oauth2_scheme), db: AsyncSession = Depends(db.session_getter)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="could not validate credentials",
@@ -50,6 +50,9 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     )
 
     token = verify_access_token(token, credentials_exception)
-    user = db.query(models.User).filter(models.User.id == token.id).first()
+
+    user_query = select(models.User).where(models.User.id == int(token.user_id))
+    query_result = await db.scalars(user_query)
+    user = query_result.first()
 
     return user

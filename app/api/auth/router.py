@@ -2,13 +2,13 @@ from fastapi import APIRouter, Depends, Query, Request, Response, status, HTTPEx
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from app import oauth2
-from app.api.auth.utils import hash_password
-from app.schemas.users import UserCreate, UserRegisterCheckCode, Token
+from app.api.auth.utils import hash_password, verify_hashes
+from app.schemas.users import UserCreate, UserLogin, UserRegisterCheckCode, Token
 from app.config import settings
 from app.models.database import db_helper as db
 from app.models.models import UserVerification, User
 from . import service
-
+from app.api import exceptions
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -86,12 +86,29 @@ async def check_verification_code_register(
                 detail=f"Аккаунт с номером +7{credentials.phone_number} уже существует.",
             )
     else:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Неверные данные.")
-
+        raise exceptions.wrong_credentials
     access_token = oauth2.create_access_token(data={"user_id": new_user.id})
 
     return {
         "access_token": access_token,
         "token_type": "bearer",
         "user_id": str(new_user.id),
+    }
+
+
+@router.post("/login", response_model=Token)
+async def user_login(user_credentials: UserLogin, db: AsyncSession = Depends(db.session_getter)):
+    user_query = select(User).where(User.phone_number == user_credentials.phone_number)
+    query_result = await db.scalars(user_query)
+    user = query_result.first()
+
+    if (user is None) or (not verify_hashes(user_credentials.password, user.password)):
+        raise exceptions.wrong_credentials
+
+    access_token = oauth2.create_access_token(data={"user_id": user.id})
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user_id": str(user.id),
     }
