@@ -1,4 +1,8 @@
-from pydantic import BaseModel, Field
+from datetime import datetime
+import json
+from pydantic import BaseModel, Field, model_validator
+
+from app.models.models import TrainingFrequency, TrainingLevel
 
 
 class UserCreate(BaseModel):
@@ -47,3 +51,18 @@ class UserOut(BaseModel):
 class SubscriptionOut(BaseModel):
     id: str
     price: int
+
+class UserInfo(BaseModel):
+    sex: str
+    date_of_birthday: datetime
+    image_url: str
+    weight: float
+    height: int
+    training_level: TrainingLevel
+    training_frequency: TrainingFrequency
+
+class ProfileUser(BaseModel):
+    name: str
+    surname: str
+    user_info: UserInfo
+    
