@@ -1,3 +1,5 @@
+from datetime import datetime
+from typing import Annotated
 from sqlalchemy import (
     TIMESTAMP,
     Column,
@@ -10,7 +12,16 @@ from sqlalchemy import (
 )
 from enum import Enum as ENUM
 from sqlalchemy.sql import func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .base import Base
+
+str_not_nullable_an = Annotated[str, mapped_column(nullable=False)]
+str_nullable_an = Annotated[str | None, mapped_column(nullable=True)]
+float_not_nullable_an = Annotated[float, mapped_column(nullable=False)]
+float_nullable_an = Annotated[float | None, mapped_column(nullable=True)]
+int_not_nullable_an = Annotated[int, mapped_column(nullable=False)]
+int_nullable_an = Annotated[int | None, mapped_column(nullable=True)]
+phone_number_an = Annotated[str, mapped_column(String(10), nullable=False)]
 
 
 class Sex(str, ENUM):
@@ -38,77 +49,77 @@ class MediaType(str, ENUM):
 class User(Base):
     __tablename__ = "users"
 
-    name = Column(String, nullable=False)
-    surname = Column(String, nullable=False)
-    phone_number = Column(String(length=10), nullable=False, unique=True)
-    password = Column(String, nullable=False)
-    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+    name: Mapped[str_not_nullable_an]
+    surname: Mapped[str_not_nullable_an]
+    phone_number: Mapped[phone_number_an]
+    password = Mapped[str_not_nullable_an]
+    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, nullable=False, server_default=func.now())
 
 
 class UserInfo(Base):
     __tablename__ = "user_info"
 
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    sex = Column(Enum(Sex), nullable=False)
-    image_url = Column(String, nullable=True)
-    date_of_birthday = Column(TIMESTAMP, nullable=False)
-    weight = Column(Float, nullable=False)
-    height = Column(Integer, nullable=False)
-    training_level = Column(Enum(TrainingLevel), nullable=False)
-    training_frequency = Column(Enum(TrainingFrequency), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    sex: Mapped[Sex] = mapped_column(nullable=False)
+    image_url: Mapped[str_nullable_an]
+    date_of_birthday: Mapped[datetime] = mapped_column(TIMESTAMP, nullable=False)
+    weight: Mapped[float_not_nullable_an]
+    height: Mapped[int_not_nullable_an]
+    training_level: Mapped[TrainingLevel] = mapped_column(nullable=False)
+    training_frequency: Mapped[TrainingFrequency] = mapped_column(nullable=False)
 
 
 class UserVerification(Base):
     __tablename__ = "user_verification"
 
-    user_id = Column(Integer, unique=True)
-    phone_number = Column(String(length=10), nullable=False, unique=True)
-    verification_code = Column(String(length=4))
+    user_id: Mapped[int] = mapped_column(unique=True)
+    phone_number: Mapped[phone_number_an]
+    verification_code: Mapped[str] = mapped_column(String(length=4), nullable=True)
 
 
 class Subscription(Base):
     __tablename__ = "subscriptions"
 
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    gym_id = Column(Integer, ForeignKey("gyms.id"), nullable=False)
-    end_time = Column(TIMESTAMP, nullable=False)
-    price = Column(Integer)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    gym_id: Mapped[int] = mapped_column(ForeignKey("gyms.id"), nullable=False)
+    end_time: Mapped[datetime] = mapped_column(TIMESTAMP, nullable=False)
+    price: Mapped[int] = mapped_column()
 
 
 class MuscleGroup(Base):
     __tablename__ = "muscle_groups"
 
-    name = Column(String, nullable=False)
-    image_url = Column(String, nullable=False)
+    name: Mapped[str_not_nullable_an]
+    image_url: Mapped[str_not_nullable_an]
 
 
 class Equipment(Base):
     __tablename__ = "equipment"
 
-    name = Column(String, nullable=False)
-    image_url = Column(String, nullable=False)
+    name: Mapped[str_not_nullable_an]
+    image_url: Mapped[str_not_nullable_an]
 
 
 class Exercise(Base):
     __tablename__ = "exercises"
 
-    name = Column(String, nullable=False)
-    description = Column(String, nullable=False)
-    equipment_id = Column(Integer, ForeignKey("equipment.id"), nullable=False)
-    muscle_group_id = Column(Integer, ForeignKey("muscle_groups.id"), nullable=False)
-    image_url = Column(String, nullable=False)
+    name: Mapped[str_not_nullable_an]
+    description: Mapped[str_not_nullable_an]
+    equipment_id: Mapped[int] = mapped_column(ForeignKey("equipment.id"), nullable=False)
+    muscle_group_id: Mapped[int] = mapped_column(ForeignKey("muscle_groups.id"), nullable=False)
+    image_url: Mapped[str_not_nullable_an]
 
 
 class ExerciseMedia(Base):
     __tablename__ = "exercise_media"
 
-    exercise_id = Column(Integer, ForeignKey("exercises.id"))
-    type = Column(Enum(MediaType), nullable=False)
-    url = Column(String, nullable=False)
+    exercise_id: Mapped[int] = mapped_column(ForeignKey("exercises.id"))
+    type: Mapped[MediaType] = mapped_column(nullable=False)
+    url: Mapped[str_not_nullable_an]
 
 
 class Gym(Base):
     __tablename__ = "gyms"
 
-    name = Column(String, nullable=False)
-    image_url = Column(String, nullable=False)
+    name: Mapped[str_not_nullable_an]
+    image_url: Mapped[str_not_nullable_an]

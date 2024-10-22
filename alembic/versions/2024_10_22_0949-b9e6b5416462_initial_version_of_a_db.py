@@ -1,8 +1,8 @@
 """initial version of a db
 
-Revision ID: d8203b608943
+Revision ID: b9e6b5416462
 Revises: 
-Create Date: 2024-10-20 03:29:50.004905
+Create Date: 2024-10-22 09:49:04.679711
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd8203b608943'
+revision = 'b9e6b5416462'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,39 +21,36 @@ def upgrade() -> None:
     op.create_table('equipment',
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('image_url', sa.String(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_equipment'))
     )
     op.create_table('gyms',
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('image_url', sa.String(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_gyms'))
     )
     op.create_table('muscle_groups',
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('image_url', sa.String(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_muscle_groups'))
     )
     op.create_table('user_verification',
-    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('phone_number', sa.String(length=10), nullable=False),
     sa.Column('verification_code', sa.String(length=4), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_user_verification')),
-    sa.UniqueConstraint('phone_number', name=op.f('uq_user_verification_phone_number')),
     sa.UniqueConstraint('user_id', name=op.f('uq_user_verification_user_id'))
     )
     op.create_table('users',
     sa.Column('name', sa.String(), nullable=False),
     sa.Column('surname', sa.String(), nullable=False),
     sa.Column('phone_number', sa.String(length=10), nullable=False),
-    sa.Column('password', sa.String(), nullable=False),
     sa.Column('created_at', sa.TIMESTAMP(), server_default=sa.text('now()'), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_users')),
-    sa.UniqueConstraint('phone_number', name=op.f('uq_users_phone_number'))
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_users'))
     )
     op.create_table('exercises',
     sa.Column('name', sa.String(), nullable=False),
@@ -61,7 +58,7 @@ def upgrade() -> None:
     sa.Column('equipment_id', sa.Integer(), nullable=False),
     sa.Column('muscle_group_id', sa.Integer(), nullable=False),
     sa.Column('image_url', sa.String(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.ForeignKeyConstraint(['equipment_id'], ['equipment.id'], name=op.f('fk_exercises_equipment_id_equipment')),
     sa.ForeignKeyConstraint(['muscle_group_id'], ['muscle_groups.id'], name=op.f('fk_exercises_muscle_group_id_muscle_groups')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_exercises'))
@@ -70,8 +67,8 @@ def upgrade() -> None:
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('gym_id', sa.Integer(), nullable=False),
     sa.Column('end_time', sa.TIMESTAMP(), nullable=False),
-    sa.Column('price', sa.Integer(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('price', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.ForeignKeyConstraint(['gym_id'], ['gyms.id'], name=op.f('fk_subscriptions_gym_id_gyms')),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_subscriptions_user_id_users')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_subscriptions'))
@@ -85,15 +82,15 @@ def upgrade() -> None:
     sa.Column('height', sa.Integer(), nullable=False),
     sa.Column('training_level', sa.Enum('beginner', 'intermediate', 'advanced', name='traininglevel'), nullable=False),
     sa.Column('training_frequency', sa.Enum('low', 'medium', 'high', name='trainingfrequency'), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_user_info_user_id_users')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_user_info'))
     )
     op.create_table('exercise_media',
-    sa.Column('exercise_id', sa.Integer(), nullable=True),
+    sa.Column('exercise_id', sa.Integer(), nullable=False),
     sa.Column('type', sa.Enum('image', 'video', name='mediatype'), nullable=False),
     sa.Column('url', sa.String(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.ForeignKeyConstraint(['exercise_id'], ['exercises.id'], name=op.f('fk_exercise_media_exercise_id_exercises')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_exercise_media'))
     )
