@@ -72,7 +72,7 @@ class UserInfo(Base):
 class UserVerification(Base):
     __tablename__ = "user_verification"
 
-    user_id: Mapped[int] = mapped_column(unique=True)
+    user_id: Mapped[int] = mapped_column(unique=True, nullable=True)
     phone_number: Mapped[phone_number_an]
     verification_code: Mapped[str] = mapped_column(String(length=4), nullable=True)
 
