@@ -55,6 +55,8 @@ class User(Base):
     password = Mapped[str_not_nullable_an]
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, nullable=False, server_default=func.now())
 
+    user_info: Mapped["UserInfo"] = relationship(back_populates="user")
+
 
 class UserInfo(Base):
     __tablename__ = "user_info"
@@ -67,6 +69,8 @@ class UserInfo(Base):
     height: Mapped[int_not_nullable_an]
     training_level: Mapped[TrainingLevel] = mapped_column(nullable=False)
     training_frequency: Mapped[TrainingFrequency] = mapped_column(nullable=False)
+
+    user: Mapped["User"] = relationship(back_populates="user_info")
 
 
 class UserVerification(Base):
