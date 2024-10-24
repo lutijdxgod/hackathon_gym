@@ -54,7 +54,6 @@ class SubscriptionOut(BaseModel):
 
 
 class UserInfo(BaseModel):
-    phone_number: str
     sex: str
     date_of_birthday: datetime
     image_url: str
@@ -65,6 +64,8 @@ class UserInfo(BaseModel):
 
 
 class ProfileUser(BaseModel):
+    phone_number: str
     name: str
     surname: str
+    created_at: datetime
     user_info: UserInfo
