@@ -43,14 +43,15 @@ class UserLogin(BaseModel):
 
 
 class UserOut(BaseModel):
-    id: str
+    id: int
     name: str
     surname: str
 
 
 class SubscriptionOut(BaseModel):
-    id: str
+    id: int
     price: int
+
 
 class UserInfo(BaseModel):
     sex: str
@@ -61,8 +62,8 @@ class UserInfo(BaseModel):
     training_level: TrainingLevel
     training_frequency: TrainingFrequency
 
+
 class ProfileUser(BaseModel):
     name: str
     surname: str
     user_info: UserInfo
-    

@@ -19,12 +19,12 @@ async def get_users_subscriptions(
         entity=Subscription, field=Subscription.user_id, value=user.id, session=db
     )
 
-    return ids_to_string(subscriptions)
+    return subscriptions
 
 
 @router.get("/profile", response_model=ProfileUser)
 async def get_users_profile(db: AsyncSession = Depends(db.session_getter), user: UserOut = Depends(get_current_user)):
-    profile_query = select(User).options(joinedload(User.user_info))
+    profile_query = select(User).where(User.id == user.id).options(joinedload(User.user_info))
     query_result = await db.execute(profile_query)
     profile: list[User] = query_result.scalars().first()
     print(f"{profile=}")
