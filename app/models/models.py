@@ -52,7 +52,7 @@ class User(Base):
     name: Mapped[str_not_nullable_an]
     surname: Mapped[str_not_nullable_an]
     phone_number: Mapped[phone_number_an]
-    password = Mapped[str_not_nullable_an]
+    password: Mapped[str_not_nullable_an]
     created_at: Mapped[datetime] = mapped_column(TIMESTAMP, nullable=False, server_default=func.now())
 
     user_info: Mapped["UserInfo"] = relationship(back_populates="user")
