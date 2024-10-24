@@ -103,6 +103,8 @@ class Equipment(Base):
     name: Mapped[str_not_nullable_an]
     image_url: Mapped[str_not_nullable_an]
 
+    exercises: Mapped[list["Exercise"]] = relationship(back_populates="equipment")
+
 
 class Exercise(Base):
     __tablename__ = "exercises"
@@ -111,8 +113,14 @@ class Exercise(Base):
     description: Mapped[str_not_nullable_an]
     equipment_id: Mapped[int] = mapped_column(ForeignKey("equipment.id"), nullable=False)
     muscle_group_id: Mapped[int] = mapped_column(ForeignKey("muscle_groups.id"), nullable=False)
-    image_url: Mapped[str_not_nullable_an]
     difficulty: Mapped[TrainingLevel] = mapped_column(nullable=False)
+
+    equipment: Mapped["Equipment"] = relationship(
+        back_populates="exercises", primaryjoin="Exercise.equipment_id == Equipment.id"
+    )
+    exercise_media: Mapped[list["ExerciseMedia"]] = relationship(
+        back_populates="exercises", primaryjoin="Exercise.id == ExerciseMedia.exercise_id"
+    )
 
 
 class ExerciseMedia(Base):
@@ -121,6 +129,8 @@ class ExerciseMedia(Base):
     exercise_id: Mapped[int] = mapped_column(ForeignKey("exercises.id"))
     type: Mapped[MediaType] = mapped_column(nullable=False)
     url: Mapped[str_not_nullable_an]
+
+    exercises: Mapped["Exercise"] = relationship(back_populates="exercise_media")
 
 
 class Gym(Base):
