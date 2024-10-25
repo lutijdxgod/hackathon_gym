@@ -116,6 +116,7 @@ class Exercise(Base):
     description: Mapped[str_not_nullable_an]
     equipment_id: Mapped[int] = mapped_column(ForeignKey("equipment.id"), nullable=False)
     muscle_group_id: Mapped[int] = mapped_column(ForeignKey("muscle_groups.id"), nullable=False)
+    image_url: Mapped[str_not_nullable_an]
     difficulty: Mapped[TrainingLevel] = mapped_column(nullable=False)
 
     equipment: Mapped["Equipment"] = relationship(

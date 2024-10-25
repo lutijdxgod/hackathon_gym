@@ -40,6 +40,7 @@ class ExerciseInList(BaseModel):
     id: int
     name: str
     description: str
+    image_url: str
 
 
 class ExercisesList(BaseModel):
