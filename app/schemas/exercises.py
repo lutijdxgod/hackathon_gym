@@ -34,3 +34,15 @@ class ExerciseInfo(BaseModel):
     muscle_group_id: int
     equipment: EquipmentInfo
     exercise_media: list[ExerciseMedia]
+
+
+class ExerciseInList(BaseModel):
+    id: int
+    name: str
+    description: str
+
+
+class ExercisesList(BaseModel):
+    beginner_exercises: list[ExerciseInList]
+    intermediate_exercises: list[ExerciseInList]
+    advanced_exercises: list[ExerciseInList]
