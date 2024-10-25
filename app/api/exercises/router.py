@@ -35,7 +35,6 @@ async def get_exercise_info(
     exercise_query = (
         select(Exercise)
         .where(Exercise.id == id)
-        .options(joinedload(Exercise.equipment))
         .options(selectinload(Exercise.exercise_media))
     )
     query_result = await db.scalars(exercise_query)
