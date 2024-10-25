@@ -1,6 +1,6 @@
 from datetime import datetime
 import json
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator, validator
 
 from app.models.models import TrainingFrequency, TrainingLevel
 
@@ -49,8 +49,14 @@ class UserOut(BaseModel):
 
 
 class SubscriptionOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
+    gym_name: str
     price: int
+    end_time: datetime
+    gym_avatar: str | None
+    is_notificated: bool = Field(..., alias="notify")
 
 
 class UserInfo(BaseModel):

@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Any
 from sqlalchemy import (
     TIMESTAMP,
     Column,
@@ -88,7 +88,9 @@ class Subscription(Base):
     gym_id: Mapped[int] = mapped_column(ForeignKey("gyms.id"), nullable=False)
     end_time: Mapped[datetime] = mapped_column(TIMESTAMP, nullable=False)
     price: Mapped[int] = mapped_column()
-    notify: Mapped[bool] = mapped_column(nullable=True)
+    notify: Mapped[bool] = mapped_column(server_default="False")
+
+    gym: Mapped["Gym"] = relationship(primaryjoin="Subscription.gym_id == Gym.id")
 
 
 class MuscleGroup(Base):

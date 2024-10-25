@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.api.functions.funcs import get_entity_by_field_nullable, ids_to_string
+from app.api.functions.funcs import sqlalchemy_model_to_dict
 from app.models.models import Subscription, User, UserInfo
 from app.oauth2 import get_current_user
 from app.schemas.users import ProfileUser, SubscriptionOut, UserOut
@@ -15,11 +15,25 @@ router = APIRouter(prefix="/users", tags=["Users"])
 async def get_users_subscriptions(
     db: AsyncSession = Depends(db.session_getter), user: UserOut = Depends(get_current_user)
 ):
-    subscriptions = await get_entity_by_field_nullable(
-        entity=Subscription, field=Subscription.user_id, value=user.id, session=db
-    )
+    # subscriptions = await get_entity_by_field_nullable(
+    #     entity=Subscription, field=Subscription.user_id, value=user.id, session=db
+    # )
 
-    return subscriptions
+    # return subscriptions
+    subscriptions_query = (
+        select(Subscription).where(Subscription.user_id == user.id).options(joinedload(Subscription.gym))
+    )
+    query_result = await db.scalars(subscriptions_query)
+    subscriptions: list[Subscription] = query_result.all()
+
+    processed_subscriptions = []
+    for i in range(len(subscriptions)):
+        subscription = subscriptions[i].__dict__
+        gym = subscriptions[i].gym
+        subscription.update({"gym_name": gym.name, "gym_avatar": gym.image_url})
+        processed_subscriptions.append(subscription)
+
+    return processed_subscriptions
 
 
 @router.get("/profile", response_model=ProfileUser)
