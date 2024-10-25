@@ -88,6 +88,7 @@ class Subscription(Base):
     gym_id: Mapped[int] = mapped_column(ForeignKey("gyms.id"), nullable=False)
     end_time: Mapped[datetime] = mapped_column(TIMESTAMP, nullable=False)
     price: Mapped[int] = mapped_column()
+    notify: Mapped[bool] = mapped_column(nullable=True)
 
 
 class MuscleGroup(Base):
