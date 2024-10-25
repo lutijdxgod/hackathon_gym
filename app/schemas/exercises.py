@@ -33,6 +33,7 @@ class ExerciseInfo(BaseModel):
     difficulty: TrainingLevel
     muscle_group_id: int
     equipment: EquipmentInfo
+    image_url: str
     exercise_media: list[ExerciseMedia]
 
 
