@@ -1,8 +1,10 @@
 from typing import Any
 from fastapi import HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy import Table, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.attributes import InstrumentedAttribute
+from app.models.base import Base
 from app.models.database import db_helper as db
 
 
@@ -79,3 +81,16 @@ def ids_to_string(elements):
         return processed_elements
     else:
         return db_row_ids_to_str(element=elements)
+
+
+def sqlalchemy_model_to_dict(row: Base) -> dict:
+    row_dictionary = row.__dict__
+
+    keys_to_delete = [key for key in row_dictionary.keys() if key.startswith("_sa")]  # or just "_"?
+    for key in keys_to_delete:
+        row_dictionary.pop(key)
+
+    return dict(
+        (col, val) if not isinstance(val, Base) else (col, sqlalchemy_model_to_dict(val))
+        for col, val in row.__dict__.items()
+    )
