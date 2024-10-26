@@ -41,6 +41,12 @@ class FlashCall(BaseModel):
     campaign_id: int
 
 
+class YandexGPT(BaseModel):
+    url: str = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
+    uri: str
+    iam_token: str
+
+
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", env_nested_delimiter="__")
 
@@ -49,6 +55,7 @@ class Settings(BaseSettings):
     firebase: Firebase
     auth: Auth
     flashcall: FlashCall
+    yandexgpt: YandexGPT
 
 
 settings = Settings()
