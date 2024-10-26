@@ -25,6 +25,7 @@ class ExerciseByEquipment(BaseModel):
     name: str
     description: str
     muscle_group_id: int
+    image_url: str
 
 
 class ExerciseInfo(BaseModel):
