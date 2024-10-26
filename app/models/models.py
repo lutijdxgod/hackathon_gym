@@ -46,6 +46,13 @@ class MediaType(str, ENUM):
     video = "video"
 
 
+class TrainingPurpose(str, ENUM):
+    gaining_weight = "Набор веса"
+    gaining_muscle_weight = "Набор мышечной массы"
+    losing_fat = "Похудение"
+    maintainig = "Поддержание формы"
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -69,6 +76,7 @@ class UserInfo(Base):
     height: Mapped[int_not_nullable_an]
     training_level: Mapped[TrainingLevel] = mapped_column(nullable=False)
     training_frequency: Mapped[TrainingFrequency] = mapped_column(nullable=False)
+    training_purpose: Mapped[TrainingPurpose] = mapped_column(nullable=False)
 
     user: Mapped["User"] = relationship(back_populates="user_info")
 
