@@ -13,4 +13,3 @@ async def get_muscle_groups(session: AsyncSession):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     return result
-    
