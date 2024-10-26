@@ -13,6 +13,7 @@ from .api.exercises.router import router as exercises_router
 from .api.auth.router import router as auth_router
 from .api.users.router import router as user_router
 from .api.equipment.router import router as equipment_router
+from .api.ai_advice.router import router as ai_router
 
 
 async def custom_callback(request: Request, response: Response, pexpire: int):
@@ -60,6 +61,7 @@ app.include_router(exercises_router)
 app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(equipment_router)
+app.include_router(ai_router)
 
 
 @app.get("/ping")
