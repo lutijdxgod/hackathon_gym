@@ -8,6 +8,7 @@ from .models import models
 from app.schemas.users import Token, TokenData
 from .config import settings
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
@@ -51,7 +52,9 @@ async def get_current_user(token: Token = Depends(oauth2_scheme), db: AsyncSessi
 
     token = verify_access_token(token, credentials_exception)
 
-    user_query = select(models.User).where(models.User.id == int(token.user_id))
+    user_query = (
+        select(models.User).where(models.User.id == int(token.user_id)).options(joinedload(models.User.user_info))
+    )
     query_result = await db.scalars(user_query)
     user = query_result.first()
 

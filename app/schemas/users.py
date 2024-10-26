@@ -2,7 +2,7 @@ from datetime import datetime
 import json
 from pydantic import BaseModel, ConfigDict, Field, model_validator, validator
 
-from app.models.models import TrainingFrequency, TrainingLevel
+from app.models.models import Sex, TrainingFrequency, TrainingLevel
 
 
 class UserCreate(BaseModel):
@@ -42,12 +42,6 @@ class UserLogin(BaseModel):
     password: str
 
 
-class UserOut(BaseModel):
-    id: int
-    name: str
-    surname: str
-
-
 class SubscriptionOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -67,6 +61,13 @@ class UserInfo(BaseModel):
     height: int
     training_level: TrainingLevel
     training_frequency: TrainingFrequency
+
+
+class UserOut(BaseModel):
+    id: int
+    name: str
+    surname: str
+    user_info: UserInfo
 
 
 class ProfileUser(BaseModel):
