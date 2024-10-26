@@ -21,22 +21,11 @@ from app.schemas.users import UserOut
 router = APIRouter(prefix="/exercise", tags=["Exercises"])
 
 
-@router.get("/", response_model=list[ExerciseInList])
-async def get_exercises_by_muscle_group(
-    db: AsyncSession = Depends(db.session_getter), user: UserOut = Depends(get_current_user)
-):
-    pass
-
-
 @router.get("/{id}", response_model=ExerciseInfo)
 async def get_exercise_info(
     id: int = Path(...), db: AsyncSession = Depends(db.session_getter), user: UserOut = Depends(get_current_user)
 ):
-    exercise_query = (
-        select(Exercise)
-        .where(Exercise.id == id)
-        .options(selectinload(Exercise.exercise_media))
-    )
+    exercise_query = select(Exercise).where(Exercise.id == id).options(selectinload(Exercise.exercise_media))
     query_result = await db.scalars(exercise_query)
     result = query_result.first()
     return result
