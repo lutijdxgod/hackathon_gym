@@ -41,7 +41,7 @@ async def get_advice_for_exercise(
         msg_format=advice_for_exercise_format,
     )
 
-    return {"message": advice}
+    return advice
 
 
 @router.get("/training_plan")
@@ -59,7 +59,7 @@ async def get_advice_for_training_plan(
         ),
         msg_format=advice_for_training_plan_format,
     )
-    return {"message": advice}
+    return advice
 
 
 @router.get("/progress_assessment")
@@ -77,4 +77,4 @@ async def get_progress_assessment(
         ),
         msg_format=progress_assessment_format,
     )
-    return {"message": advice}
+    return advice
