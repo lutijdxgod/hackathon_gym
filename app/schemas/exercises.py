@@ -41,6 +41,7 @@ class ExerciseInList(BaseModel):
     name: str
     description: str
     equipment_id: int
+    muscle_group_id: int
     image_url: str
 
 
