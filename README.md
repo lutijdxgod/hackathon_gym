@@ -1,3 +1,9 @@
+You can register in this app's dev environment from docs:
+http://176.123.161.174:8000/docs#/Authentication/create_user_auth_register_post
+Verification code is the 4 last digits of a number you get a call from.
+http://176.123.161.174:8000/docs#/Authentication/check_verification_code_register_auth_check_verification_code_register_post
+
+
 Requirements
 Before starting, make sure you have these installed:
 
