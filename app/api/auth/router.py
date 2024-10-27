@@ -6,7 +6,7 @@ from app.api.auth.utils import hash_password, verify_hashes
 from app.schemas.users import UserCreate, UserLogin, UserOut, UserRegisterCheckCode, Token
 from app.config import settings
 from app.models.database import db_helper as db
-from app.models.models import UserVerification, User
+from app.models.models import UserVerification, User, UserInfo
 from . import service
 from app.api import exceptions
 
@@ -68,8 +68,25 @@ async def check_verification_code_register(
                 }
             )
             db.add(new_user)
+
             await db.commit()
             await db.refresh(new_user)
+
+            user_info = UserInfo(
+                **{
+                    "user_id": new_user.id,
+                    "sex": credentials.user_info.sex,
+                    "date_of_birthday": credentials.user_info.date_of_birthday,
+                    "image_url": credentials.user_info.image_url,
+                    "weight": credentials.user_info.weight,
+                    "height": credentials.user_info.height,
+                    "training_level": credentials.user_info.training_level,
+                    "training_frequency": credentials.user_info.training_frequency,
+                    "training_purpose": credentials.user_info.training_purpose,
+                }
+            )
+            db.add(user_info)
+            db.commit()
 
             user_id = new_user.id
             update_query = (

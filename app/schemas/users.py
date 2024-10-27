@@ -2,7 +2,7 @@ from datetime import datetime
 import json
 from pydantic import BaseModel, ConfigDict, Field, model_validator, validator
 
-from app.models.models import Sex, TrainingFrequency, TrainingLevel
+from app.models.models import Sex, TrainingFrequency, TrainingLevel, TrainingPurpose
 
 
 class UserCreate(BaseModel):
@@ -25,6 +25,17 @@ class TokenData(BaseModel):
     user_id: str | None
 
 
+class UserInfo(BaseModel):
+    sex: Sex
+    date_of_birthday: datetime
+    image_url: str
+    weight: float
+    height: int
+    training_level: TrainingLevel
+    training_frequency: TrainingFrequency
+    training_purpose: TrainingPurpose
+
+
 class UserRegisterCheckCode(BaseModel):
     phone_number: str
     verification_code: str
@@ -35,6 +46,7 @@ class UserRegisterCheckCode(BaseModel):
         description="String that represents User's surname",
         examples=["Мыськин"],
     )
+    user_info: UserInfo
 
 
 class UserLogin(BaseModel):
@@ -51,16 +63,6 @@ class SubscriptionOut(BaseModel):
     end_time: datetime
     gym_avatar: str | None
     is_notificated: bool = Field(..., alias="notify")
-
-
-class UserInfo(BaseModel):
-    sex: str
-    date_of_birthday: datetime
-    image_url: str
-    weight: float
-    height: int
-    training_level: TrainingLevel
-    training_frequency: TrainingFrequency
 
 
 class UserOut(BaseModel):
