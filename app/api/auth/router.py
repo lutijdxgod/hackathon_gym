@@ -3,7 +3,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from app import oauth2
 from app.api.auth.utils import hash_password, verify_hashes
-from app.schemas.users import UserCreate, UserLogin, UserRegisterCheckCode, Token
+from app.schemas.users import UserCreate, UserLogin, UserOut, UserRegisterCheckCode, Token
 from app.config import settings
 from app.models.database import db_helper as db
 from app.models.models import UserVerification, User
@@ -112,3 +112,8 @@ async def user_login(user_credentials: UserLogin, db: AsyncSession = Depends(db.
         "token_type": "bearer",
         "user_id": str(user.id),
     }
+
+
+@router.get("/validate_user")
+async def validate_user(user: UserOut = Depends(oauth2.get_current_user)):
+    return Response(status_code=status.HTTP_200_OK)
