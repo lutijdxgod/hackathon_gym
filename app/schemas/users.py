@@ -27,7 +27,7 @@ class TokenData(BaseModel):
 
 class UserInfo(BaseModel):
     sex: Sex
-    date_of_birthday: datetime
+    date_of_birthday: datetime = Field(name="Date Of Birthday", examples=["2004-08-31T00:00:00.000"])
     image_url: str
     weight: float
     height: int
