@@ -18,18 +18,18 @@ pip install -r requirements.txt
 4. Create .env file
 The example file is .env.example
 
-6. Create alembic.ini file
+5. Create alembic.ini file
 The example file is alembic.ini.example
 
-7. Perform migrations
+6. Perform migrations
 alembic upgrade head
 
-8. Run the FastAPI Application
+7. Run the FastAPI Application
 To start the FastAPI app with Uvicorn, run:
 
 uvicorn app.main:app --reload The --reload flag automatically restarts the server when you make code changes.
 
-9. Open the Application
+8. Open the Application
 Once the server is running, open your browser and go to:
 
 http://127.0.0.1:8000/ You should see a welcome message.
