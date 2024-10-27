@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 import httpx
 from ..config import settings
 
@@ -22,7 +23,13 @@ def send_request(message: str, msg_format: str) -> dict:
     }
     with httpx.Client() as client:
         request = client.post(url=settings.yandexgpt.url, headers=headers, json=prompt)
-    return request.json()["result"]["alternatives"][0]["message"]["text"]
+        try:
+            result = request.json()["result"]["alternatives"][0]["message"]["text"]
+        except:
+            print(request.json())
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Something went wrong.")
+
+        return result
 
 
 # Челик выбрал упражнение а ai говорит стоит или нет делать это упражнение учитывая данные челика и цель его тренировок.

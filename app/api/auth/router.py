@@ -115,5 +115,6 @@ async def user_login(user_credentials: UserLogin, db: AsyncSession = Depends(db.
 
 
 @router.get("/validate_user")
-async def validate_user(user: UserOut = Depends(oauth2.get_current_user)):
+async def validate_user(token: str = Query(...)):
+    user = oauth2.plain_get_current_user(token=token)
     return Response(status_code=status.HTTP_200_OK)

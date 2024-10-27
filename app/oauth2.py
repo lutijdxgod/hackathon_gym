@@ -1,5 +1,5 @@
 from jose import JWTError, jwt
-from fastapi import Depends, status, HTTPException
+from fastapi import Depends, Response, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -30,6 +30,7 @@ def create_access_token(data: dict):
 def verify_access_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
+        print(payload)
 
         id: str = payload.get("user_id")
 
@@ -59,3 +60,15 @@ async def get_current_user(token: Token = Depends(oauth2_scheme), db: AsyncSessi
     user = query_result.first()
 
     return user
+
+
+def plain_get_current_user(token: Token = Depends(oauth2_scheme)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    token = verify_access_token(token, credentials_exception)
+
+    return Response(status_code=status.HTTP_200_OK)
