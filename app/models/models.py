@@ -22,6 +22,7 @@ float_nullable_an = Annotated[float | None, mapped_column(nullable=True)]
 int_not_nullable_an = Annotated[int, mapped_column(nullable=False)]
 int_nullable_an = Annotated[int | None, mapped_column(nullable=True)]
 phone_number_an = Annotated[str, mapped_column(String(10), nullable=False)]
+datetime_now_not_nullable_an = Annotated[datetime, mapped_column(TIMESTAMP, nullable=False, server_default=func.now())]
 
 
 class Sex(str, ENUM):
@@ -60,7 +61,7 @@ class User(Base):
     surname: Mapped[str_not_nullable_an]
     phone_number: Mapped[phone_number_an]
     password: Mapped[str_not_nullable_an]
-    created_at: Mapped[datetime] = mapped_column(TIMESTAMP, nullable=False, server_default=func.now())
+    created_at: Mapped[datetime_now_not_nullable_an]
 
     user_info: Mapped["UserInfo"] = relationship(back_populates="user")
 
@@ -150,3 +151,21 @@ class Gym(Base):
 
     name: Mapped[str_not_nullable_an]
     image_url: Mapped[str_not_nullable_an]
+
+class Practice(Base):
+    __tablename__ = 'practice'
+
+    name: Mapped[str_not_nullable_an]
+    start_time: Mapped[datetime] = mapped_column(nullable=True)
+    end_time: Mapped[datetime] = mapped_column(nullable=True)
+
+    exercises: Mapped[list['PracticeExercises']] = relationship(primaryjoin='Practice.id == PracticeExercises.practice_id')
+
+class PracticeExercises(Base):
+    __tablename__ = 'practice_exercises'
+
+    practice_id: Mapped[int] = mapped_column(ForeignKey('practice.id'), nullable = False)
+    exercise_id: Mapped[int] = mapped_column(ForeignKey('exercises.id'), nullable = False)
+    sets: Mapped[int_not_nullable_an]
+    repetitions: Mapped[int_not_nullable_an] 
+    weight: Mapped[float_nullable_an] 
