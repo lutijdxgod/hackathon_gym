@@ -153,28 +153,6 @@ class Gym(Base):
     image_url: Mapped[str_not_nullable_an]
 
 
-class Practice(Base):
-    __tablename__ = "practice"
-
-    name: Mapped[str_not_nullable_an]
-    start_time: Mapped[datetime] = mapped_column(nullable=True)
-    end_time: Mapped[datetime] = mapped_column(nullable=True)
-
-    exercises: Mapped[list["PracticeExercises"]] = relationship(
-        primaryjoin="Practice.id == PracticeExercises.practice_id"
-    )
-
-
-class PracticeExercises(Base):
-    __tablename__ = "practice_exercises"
-
-    practice_id: Mapped[int] = mapped_column(ForeignKey("practice.id"), nullable=False)
-    exercise_id: Mapped[int] = mapped_column(ForeignKey("exercises.id"), nullable=False)
-    sets: Mapped[int_not_nullable_an]
-    repetitions: Mapped[int_not_nullable_an]
-    weight: Mapped[float_nullable_an]
-
-
 class PreparedWorkout(Base):
     __tablename__ = "prepared_workouts"
 
