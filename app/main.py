@@ -14,6 +14,7 @@ from .api.auth.router import router as auth_router
 from .api.users.router import router as user_router
 from .api.equipment.router import router as equipment_router
 from .api.ai_advice.router import router as ai_router
+from .api.prepared_workouts.router import router as prepared_workouts_router
 
 
 async def custom_callback(request: Request, response: Response, pexpire: int):
@@ -56,12 +57,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(muscle_groups_router)
-app.include_router(exercises_router)
-app.include_router(auth_router)
-app.include_router(user_router)
-app.include_router(equipment_router)
-app.include_router(ai_router)
+routers = [
+    muscle_groups_router,
+    exercises_router,
+    auth_router,
+    user_router,
+    equipment_router,
+    ai_router,
+    prepared_workouts_router,
+]
+for router in routers:
+    app.include_router(router)
 
 
 @app.get("/ping")

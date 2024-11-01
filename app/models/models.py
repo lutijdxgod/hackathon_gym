@@ -150,3 +150,33 @@ class Gym(Base):
 
     name: Mapped[str_not_nullable_an]
     image_url: Mapped[str_not_nullable_an]
+
+
+class PreparedWorkout(Base):
+    __tablename__ = "prepared_workouts"
+
+    name: Mapped[str_not_nullable_an]
+    description: Mapped[str_not_nullable_an]
+
+    exercises: Mapped[list["PreparedWorkoutsExercises"]] = relationship(
+        primaryjoin="PreparedWorkoutsExercises.workout_id == PreparedWorkout.id"
+    )
+
+
+class PreparedWorkoutsExercises(Base):
+    __tablename__ = "prepared_workouts_exercises"
+
+    workout_id: Mapped[int] = mapped_column(ForeignKey("prepared_workouts.id"), nullable=False)
+    exercise_id: Mapped[int] = mapped_column(ForeignKey("exercises.id"), nullable=False)
+    sets: Mapped[int_not_nullable_an]
+    repetitions: Mapped[int_not_nullable_an]
+    weight: Mapped[int_nullable_an]
+
+    exercise: Mapped["Exercise"] = relationship(primaryjoin="Exercise.id == PreparedWorkoutsExercises.exercise_id")
+
+
+class FavoriteWorkout(Base):
+    __tablename__ = "favorite_workouts"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    workout_id: Mapped[int] = mapped_column(ForeignKey("prepared_workouts.id"))

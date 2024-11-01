@@ -1,7 +1,6 @@
-from pydantic import BaseModel
+from pydantic import AliasPath, BaseModel, Field
 
 from app.models.models import TrainingLevel
-from app.schemas.equipment import EquipmentInfo
 from app.schemas.exercise_media import ExerciseMedia
 
 
@@ -50,3 +49,16 @@ class ExercisesList(BaseModel):
     beginner_exercises: list[ExerciseInList]
     intermediate_exercises: list[ExerciseInList]
     advanced_exercises: list[ExerciseInList]
+
+
+class ExerciseInWorkout(BaseModel):
+    id: int
+    name: str = Field(validation_alias=AliasPath("exercise", "name"))
+    description: str = Field(validation_alias=AliasPath("exercise", "description"))
+    equipment_id: int = Field(validation_alias=AliasPath("exercise", "equipment_id"))
+    muscle_group_id: int = Field(validation_alias=AliasPath("exercise", "muscle_group_id"))
+    image_url: str = Field(validation_alias=AliasPath("exercise", "image_url"))
+    difficulty: TrainingLevel = Field(validation_alias=AliasPath("exercise", "difficulty"))
+    sets: int
+    repetitions: int
+    weight: float | None
