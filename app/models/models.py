@@ -51,7 +51,7 @@ class TrainingPurpose(str, ENUM):
     gaining_weight = "Набор веса"
     gaining_muscle_weight = "Набор мышечной массы"
     losing_fat = "Похудение"
-    maintainig = "Поддержание формы"
+    maintaining = "Поддержание формы"
 
 
 class User(Base):
@@ -158,6 +158,7 @@ class PreparedWorkout(Base):
 
     name: Mapped[str_not_nullable_an]
     description: Mapped[str_not_nullable_an]
+    trainig_level: Mapped[TrainingLevel] = mapped_column(nullable=False)
 
     exercises: Mapped[list["PreparedWorkoutsExercises"]] = relationship(
         primaryjoin="PreparedWorkoutsExercises.workout_id == PreparedWorkout.id"
