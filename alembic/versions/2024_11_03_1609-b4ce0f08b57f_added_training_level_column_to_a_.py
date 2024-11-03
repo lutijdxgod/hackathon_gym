@@ -21,10 +21,10 @@ def upgrade() -> None:
     op.add_column(
         "prepared_workouts",
         sa.Column(
-            "trainig_level", sa.Enum("beginner", "intermediate", "advanced", name="traininglevel"), nullable=False
+            "training_level", sa.Enum("beginner", "intermediate", "advanced", name="traininglevel"), nullable=False
         ),
     )
 
 
 def downgrade() -> None:
-    op.drop_column("prepared_workouts", "trainig_level")
+    op.drop_column("prepared_workouts", "training_level")

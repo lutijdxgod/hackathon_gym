@@ -158,7 +158,7 @@ class PreparedWorkout(Base):
 
     name: Mapped[str_not_nullable_an]
     description: Mapped[str_not_nullable_an]
-    trainig_level: Mapped[TrainingLevel] = mapped_column(nullable=False)
+    training_level: Mapped[TrainingLevel] = mapped_column(nullable=False)
 
     exercises: Mapped[list["PreparedWorkoutsExercises"]] = relationship(
         primaryjoin="PreparedWorkoutsExercises.workout_id == PreparedWorkout.id"

@@ -26,14 +26,7 @@ async def get_users_subscriptions(
     query_result = await db.scalars(subscriptions_query)
     subscriptions: list[Subscription] = query_result.all()
 
-    processed_subscriptions = []
-    for i in range(len(subscriptions)):
-        subscription = subscriptions[i].__dict__
-        gym = subscriptions[i].gym
-        subscription.update({"gym_name": gym.name, "gym_avatar": gym.image_url})
-        processed_subscriptions.append(subscription)
-
-    return processed_subscriptions
+    return subscriptions
 
 
 @router.get("/profile", response_model=ProfileUser)

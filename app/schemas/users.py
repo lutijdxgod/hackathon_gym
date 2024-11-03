@@ -1,6 +1,6 @@
 from datetime import datetime
 import json
-from pydantic import BaseModel, ConfigDict, Field, model_validator, validator
+from pydantic import AliasPath, BaseModel, ConfigDict, Field, model_validator, validator
 
 from app.models.models import Sex, TrainingFrequency, TrainingLevel, TrainingPurpose
 
@@ -58,10 +58,10 @@ class SubscriptionOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    gym_name: str
     price: int
     end_time: datetime
-    gym_avatar: str | None
+    gym_name: str = Field(validation_alias=AliasPath("gym", "name"))
+    gym_avatar: str | None = Field(validation_alias=AliasPath("gym", "image_url"))
     is_notificated: bool = Field(..., alias="notify")
 
 
