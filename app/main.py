@@ -36,7 +36,9 @@ async def custom_callback(request: Request, response: Response, pexpire: int):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    redis_connection = redis.from_url("redis://localhost", encoding="utf8", decode_responses=True)
+    redis_connection = redis.from_url(
+        "redis://localhost", encoding="utf8", decode_responses=True
+    )
     await FastAPILimiter.init(
         redis=redis_connection,
         http_callback=custom_callback,
@@ -72,5 +74,4 @@ for router in routers:
 
 @app.get("/ping")
 async def root():
-    print(settings.auth.access_token_expire_minutes)
     return {"success": True, "message": " pong"}

@@ -19,7 +19,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = settings.auth.access_token_expire_minutes
 
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(timezone.utc) + timedelta(
+        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
+    )
     to_encode.update({"exp": expire})
 
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
@@ -30,7 +32,6 @@ def create_access_token(data: dict):
 def verify_access_token(token: str, credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
-        print(payload)
 
         id: str = payload.get("user_id")
 
@@ -44,7 +45,10 @@ def verify_access_token(token: str, credentials_exception):
     return token_data
 
 
-async def get_current_user(token: Token = Depends(oauth2_scheme), db: AsyncSession = Depends(db.session_getter)):
+async def get_current_user(
+    token: Token = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(db.session_getter),
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="could not validate credentials",
@@ -54,7 +58,9 @@ async def get_current_user(token: Token = Depends(oauth2_scheme), db: AsyncSessi
     token = verify_access_token(token, credentials_exception)
 
     user_query = (
-        select(models.User).where(models.User.id == int(token.user_id)).options(joinedload(models.User.user_info))
+        select(models.User)
+        .where(models.User.id == int(token.user_id))
+        .options(joinedload(models.User.user_info))
     )
     query_result = await db.scalars(user_query)
     user = query_result.first()
