@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "434fc3bde50d"
-down_revision = "e09d25e015d6"
+down_revision = "30fcb8a36570"
 branch_labels = None
 depends_on = None
 
@@ -57,13 +57,9 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(
             ["workout_id"],
             ["prepared_workouts.id"],
-            name=op.f(
-                "fk_prepared_workouts_exercises_workout_id_prepared_workouts"
-            ),
+            name=op.f("fk_prepared_workouts_exercises_workout_id_prepared_workouts"),
         ),
-        sa.PrimaryKeyConstraint(
-            "id", name=op.f("pk_prepared_workouts_exercises")
-        ),
+        sa.PrimaryKeyConstraint("id", name=op.f("pk_prepared_workouts_exercises")),
     )
 
 
