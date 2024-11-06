@@ -34,6 +34,7 @@ class UserInfo(BaseModel):
     training_level: TrainingLevel
     training_frequency: TrainingFrequency
     training_purpose: TrainingPurpose
+    todays_muscle_group_id: int
 
 
 class UserRegisterCheckCode(BaseModel):

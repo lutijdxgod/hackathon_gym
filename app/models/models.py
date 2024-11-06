@@ -57,6 +57,11 @@ class TrainingPurpose(str, ENUM):
     maintaining = "Поддержание формы"
 
 
+class AdviceType(str, ENUM):
+    training_plan = "План тренировки"
+    progress = "Прогресс"
+
+
 class User(Base):
     __tablename__ = "users"
 
@@ -75,16 +80,13 @@ class UserInfo(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     sex: Mapped[Sex] = mapped_column(nullable=False)
     image_url: Mapped[str_nullable_an]
-    date_of_birthday: Mapped[datetime] = mapped_column(
-        TIMESTAMP, nullable=False
-    )
+    date_of_birthday: Mapped[datetime] = mapped_column(TIMESTAMP, nullable=False)
     weight: Mapped[float_not_nullable_an]
     height: Mapped[int_not_nullable_an]
     training_level: Mapped[TrainingLevel] = mapped_column(nullable=False)
-    training_frequency: Mapped[TrainingFrequency] = mapped_column(
-        nullable=False
-    )
+    training_frequency: Mapped[TrainingFrequency] = mapped_column(nullable=False)
     training_purpose: Mapped[TrainingPurpose] = mapped_column(nullable=False)
+    todays_muscle_group_id: Mapped[int] = mapped_column(ForeignKey("muscle_groups.id"), nullable=True)
 
     user: Mapped["User"] = relationship(back_populates="user_info")
 
@@ -94,9 +96,7 @@ class UserVerification(Base):
 
     user_id: Mapped[int] = mapped_column(unique=True, nullable=True)
     phone_number: Mapped[phone_number_an]
-    verification_code: Mapped[str] = mapped_column(
-        String(length=4), nullable=True
-    )
+    verification_code: Mapped[str] = mapped_column(String(length=4), nullable=True)
 
 
 class Subscription(Base):
@@ -108,9 +108,7 @@ class Subscription(Base):
     price: Mapped[int] = mapped_column()
     notify: Mapped[bool] = mapped_column(server_default="False")
 
-    gym: Mapped["Gym"] = relationship(
-        primaryjoin="Subscription.gym_id == Gym.id"
-    )
+    gym: Mapped["Gym"] = relationship(primaryjoin="Subscription.gym_id == Gym.id")
 
 
 class MuscleGroup(Base):
@@ -126,9 +124,7 @@ class Equipment(Base):
     name: Mapped[str_not_nullable_an]
     image_url: Mapped[str_not_nullable_an]
 
-    exercises: Mapped[list["Exercise"]] = relationship(
-        back_populates="equipment"
-    )
+    exercises: Mapped[list["Exercise"]] = relationship(back_populates="equipment")
 
 
 class Exercise(Base):
@@ -136,12 +132,8 @@ class Exercise(Base):
 
     name: Mapped[str_not_nullable_an]
     description: Mapped[str_not_nullable_an]
-    equipment_id: Mapped[int] = mapped_column(
-        ForeignKey("equipment.id"), nullable=False
-    )
-    muscle_group_id: Mapped[int] = mapped_column(
-        ForeignKey("muscle_groups.id"), nullable=False
-    )
+    equipment_id: Mapped[int] = mapped_column(ForeignKey("equipment.id"), nullable=False)
+    muscle_group_id: Mapped[int] = mapped_column(ForeignKey("muscle_groups.id"), nullable=False)
     image_url: Mapped[str_not_nullable_an]
     difficulty: Mapped[TrainingLevel] = mapped_column(nullable=False)
 
@@ -153,9 +145,7 @@ class Exercise(Base):
         back_populates="exercises",
         primaryjoin="Exercise.id == ExerciseMedia.exercise_id",
     )
-    muscle_group: Mapped[list["MuscleGroup"]] = relationship(
-        primaryjoin="MuscleGroup.id == Exercise.muscle_group_id"
-    )
+    muscle_group: Mapped[list["MuscleGroup"]] = relationship(primaryjoin="MuscleGroup.id == Exercise.muscle_group_id")
 
 
 class ExerciseMedia(Base):
@@ -165,9 +155,7 @@ class ExerciseMedia(Base):
     type: Mapped[MediaType] = mapped_column(nullable=False)
     url: Mapped[str_not_nullable_an]
 
-    exercises: Mapped["Exercise"] = relationship(
-        back_populates="exercise_media"
-    )
+    exercises: Mapped["Exercise"] = relationship(back_populates="exercise_media")
 
 
 class Gym(Base):
@@ -175,6 +163,15 @@ class Gym(Base):
 
     name: Mapped[str_not_nullable_an]
     image_url: Mapped[str_not_nullable_an]
+
+
+class AIAdvice(Base):
+    __tablename__ = "ai_advice"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    type: Mapped[AdviceType] = mapped_column(nullable=False)
+    message: Mapped[str_not_nullable_an]
+    created_at: Mapped[datetime_now_not_nullable_an]
 
 
 class PreparedWorkout(Base):
@@ -193,19 +190,13 @@ class PreparedWorkout(Base):
 class PreparedWorkoutsExercises(Base):
     __tablename__ = "prepared_workouts_exercises"
 
-    workout_id: Mapped[int] = mapped_column(
-        ForeignKey("prepared_workouts.id"), nullable=False
-    )
-    exercise_id: Mapped[int] = mapped_column(
-        ForeignKey("exercises.id"), nullable=False
-    )
+    workout_id: Mapped[int] = mapped_column(ForeignKey("prepared_workouts.id"), nullable=False)
+    exercise_id: Mapped[int] = mapped_column(ForeignKey("exercises.id"), nullable=False)
     sets: Mapped[int_not_nullable_an]
     repetitions: Mapped[int_not_nullable_an]
     weight: Mapped[int_nullable_an]
 
-    exercise: Mapped["Exercise"] = relationship(
-        primaryjoin="Exercise.id == PreparedWorkoutsExercises.exercise_id"
-    )
+    exercise: Mapped["Exercise"] = relationship(primaryjoin="Exercise.id == PreparedWorkoutsExercises.exercise_id")
 
 
 class FavoriteWorkout(Base):

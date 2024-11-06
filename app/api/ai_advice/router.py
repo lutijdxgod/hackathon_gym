@@ -16,6 +16,7 @@ from app.integrations.yandexgptmanager import (
     progress_assessment,
     progress_assessment_format,
 )
+from crud.ai_advice import assess_progress, get_advice_for_training_plan
 
 router = APIRouter(prefix="/ai", tags=["AI"])
 
@@ -45,20 +46,10 @@ async def get_advice_for_exercise(
 
 
 @router.get("/training_plan")
-async def get_advice_for_training_plan(
+async def get_advice_for_daily_training_plan(
     db: AsyncSession = Depends(db.session_getter), user: UserOut = Depends(get_current_user)
 ):
-    # training_plan_query = select()
-    advice = send_request(
-        message=advice_for_training_plan.format(
-            sex=user.user_info.sex,
-            weight=user.user_info.weight,
-            height=user.user_info.height,
-            training_level=user.user_info.training_level,
-            training_frequency=user.user_info.training_frequency,
-        ),
-        msg_format=advice_for_training_plan_format,
-    )
+    advice = await get_advice_for_training_plan(user=user, session=db)
     return advice
 
 
@@ -66,15 +57,5 @@ async def get_advice_for_training_plan(
 async def get_progress_assessment(
     db: AsyncSession = Depends(db.session_getter), user: UserOut = Depends(get_current_user)
 ):
-    # training_plan_query = select()
-    advice = send_request(
-        message=progress_assessment.format(
-            sex=user.user_info.sex,
-            weight=user.user_info.weight,
-            height=user.user_info.height,
-            training_level=user.user_info.training_level,
-            training_frequency=user.user_info.training_frequency,
-        ),
-        msg_format=progress_assessment_format,
-    )
+    advice = await assess_progress(user=user, session=db)
     return advice

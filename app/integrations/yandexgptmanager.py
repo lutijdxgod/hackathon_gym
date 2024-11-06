@@ -22,7 +22,7 @@ def send_request(message: str, msg_format: str) -> dict:
         ],
     }
     with httpx.Client() as client:
-        request = client.post(url=settings.yandexgpt.url, headers=headers, json=prompt)
+        request = client.post(url=settings.yandexgpt.url, headers=headers, json=prompt, timeout=10)
         try:
             result = request.json()["result"]["alternatives"][0]["message"]["text"]
         except:
@@ -47,7 +47,7 @@ advice_for_exercise_format = (
 )
 
 advice_for_training_plan = (
-    "Привет! Сегодня у меня тренировка и я планирую проработать группу мышц: грудь. Составь, пожалуйста, план тренировки на эту группу мышц."
+    "Привет! Сегодня у меня тренировка и я планирую проработать группу мышц: {muscle_group}. Составь, пожалуйста, план тренировки на эту группу мышц."
     + "Вот мои данные: пол {sex}, вес {weight}, height {height}, уровень подготовки {training_level}, "
     + "частота тренировок {training_frequency}."
 )
