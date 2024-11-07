@@ -101,22 +101,15 @@ def ids_to_string(elements):
 
 
 def sqlalchemy_model_to_dict_for_join(row: Base | list) -> dict:
-    print(type(row))
     if isinstance(row, Base):
         row_dictionary = row.__dict__
 
-        keys_to_delete = [
-            key for key in row_dictionary.keys() if key.startswith("_sa")
-        ]  # or just "_"?
+        keys_to_delete = [key for key in row_dictionary.keys() if key.startswith("_sa")]  # or just "_"?
         for key in keys_to_delete:
             row_dictionary.pop(key)
 
         return dict(
-            (
-                (col, val)
-                if not isinstance(val, (Base, list))
-                else (col, sqlalchemy_model_to_dict_for_join(val))
-            )
+            ((col, val) if not isinstance(val, (Base, list)) else (col, sqlalchemy_model_to_dict_for_join(val)))
             for col, val in row.__dict__.items()
         )
     else:
@@ -125,11 +118,7 @@ def sqlalchemy_model_to_dict_for_join(row: Base | list) -> dict:
 
 def sqlalchemy_model_to_dict(row: Base) -> dict:
     return dict(
-        (
-            (col, val)
-            if not isinstance(val := getattr(row, col), Base)
-            else (col, sqlalchemy_model_to_dict(val))
-        )
+        ((col, val) if not isinstance(val := getattr(row, col), Base) else (col, sqlalchemy_model_to_dict(val)))
         for col in row.__table__.columns.keys()
     )
 

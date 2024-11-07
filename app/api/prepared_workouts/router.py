@@ -23,27 +23,21 @@ from crud.prepared_workouts import (
 router = APIRouter(prefix="/prepared_workouts", tags=["Prepared Workouts"])
 
 
-@router.get(
-    "/muscle_groups", response_model=list[PreparedWorkoutByMuscleGroups]
-)
+@router.get("/muscle_groups", response_model=list[PreparedWorkoutByMuscleGroups])
 async def get_workout_by_muscle_group_ids(
     muscle_groups: MuscleGroupIds = Body(...),
     db: AsyncSession = Depends(db.session_getter),
     user: UserOut = Depends(get_current_user),
 ):
-    workouts = await get_prepared_workout_by_muscle_group_ids(
-        muscle_group_ids=muscle_groups.ids, session=db
-    )
+    workouts = await get_prepared_workout_by_muscle_group_ids(muscle_group_ids=muscle_groups.ids, session=db)
     return workouts
 
 
-@router.get("/{workout_id}", response_model=PreparedWorkoutOut)
+@router.get("/{id}", response_model=PreparedWorkoutOut)
 async def get_workout_by_id(
-    workout_id: int,
+    id: int,
     db: AsyncSession = Depends(db.session_getter),
     user: UserOut = Depends(get_current_user),
 ):
-    workout = await get_prepared_workout_by_id(
-        workout_id=workout_id, session=db
-    )
+    workout = await get_prepared_workout_by_id(workout_id=id, session=db)
     return workout
