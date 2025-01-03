@@ -83,6 +83,7 @@ async def check_verification_code_register(
                     "training_level": credentials.user_info.training_level,
                     "training_frequency": credentials.user_info.training_frequency,
                     "training_purpose": credentials.user_info.training_purpose,
+                    "todays_muscle_group_id": credentials.user_info.todays_muscle_group_id,
                 }
             )
             db.add(user_info)
