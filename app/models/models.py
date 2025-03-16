@@ -39,10 +39,10 @@ class TrainingLevel(str, ENUM):
     advanced = "Advanced"
 
 
-class TrainingFrequency(int, ENUM):
-    low = 1
-    medium = 2
-    high = 3
+class TrainingFrequency(str, ENUM):
+    low = "low"
+    medium = "medium"
+    high = "high"
 
 
 class MediaType(str, ENUM):
@@ -125,6 +125,7 @@ class Equipment(Base):
     image_url: Mapped[str_not_nullable_an]
 
     exercises: Mapped[list["Exercise"]] = relationship(back_populates="equipment")
+    gym_equipments: Mapped["GymEquipments"] = relationship(back_populates="equipment")
 
 
 class Exercise(Base):
@@ -204,3 +205,31 @@ class FavoriteWorkout(Base):
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     workout_id: Mapped[int] = mapped_column(ForeignKey("prepared_workouts.id"))
+
+
+class GymEquipments(Base):
+    __tablename__ = "gym_equipments"
+
+    gym_id: Mapped[int_not_nullable_an] = mapped_column(ForeignKey("gyms.id"))
+    equipment_id: Mapped[int_not_nullable_an] = mapped_column(ForeignKey("equipment.id"))
+
+    equipment: Mapped["Equipment"] = relationship(back_populates="gym_equipments")
+
+
+class MyTraining(Base):
+    __tablename__ = "my_training"
+    name: Mapped[str_not_nullable_an]
+    training_frequency: Mapped[TrainingFrequency] = mapped_column(nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    my_training_exercises: Mapped[list["MyTrainingExercises"]] = relationship(
+        back_populates="my_training", cascade="all, delete-orphan", passive_deletes=True
+    )
+
+
+class MyTrainingExercises(Base):
+    __tablename__ = "my_training_exercises"
+    training_id: Mapped[int_not_nullable_an] = mapped_column(ForeignKey("my_training.id", ondelete="cascade"))
+    sets: Mapped[int_not_nullable_an]
+    repetitions: Mapped[int_not_nullable_an]
+    exercise_name: Mapped[str_not_nullable_an]
+    my_training: Mapped["MyTraining"] = relationship(back_populates="my_training_exercises")

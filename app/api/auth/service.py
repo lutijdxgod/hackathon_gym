@@ -35,5 +35,7 @@ def get_verification_code(phone_number: str):
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Попробуйте чуть позже, в данный момент сервис звонков перегружен.",
         )
+    else:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
 
     return verification_code

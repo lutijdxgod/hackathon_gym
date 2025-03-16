@@ -15,6 +15,8 @@ from .api.users.router import router as user_router
 from .api.equipment.router import router as equipment_router
 from .api.ai_advice.router import router as ai_router
 from .api.prepared_workouts.router import router as prepared_workouts_router
+from .api.gyms_equipment.router import router as gyms_equipment_router
+from .api.my_training.router import router as my_training_router
 
 
 async def custom_callback(request: Request, response: Response, pexpire: int):
@@ -36,9 +38,7 @@ async def custom_callback(request: Request, response: Response, pexpire: int):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    redis_connection = redis.from_url(
-        "redis://localhost", encoding="utf8", decode_responses=True
-    )
+    redis_connection = redis.from_url("redis://localhost", encoding="utf8", decode_responses=True)
     await FastAPILimiter.init(
         redis=redis_connection,
         http_callback=custom_callback,
@@ -67,6 +67,8 @@ routers = [
     equipment_router,
     ai_router,
     prepared_workouts_router,
+    gyms_equipment_router,
+    my_training_router,
 ]
 for router in routers:
     app.include_router(router)
